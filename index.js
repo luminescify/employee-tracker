@@ -50,12 +50,16 @@ function loadPrompts() {
                     {
                         name: 'Update Employee Role',
                         value: 'UPDATE_EMPLOYEE_ROLE'
+                    },
+                    {
+                        name: 'Quit',
+                        value: 'QUIT'
                     }
                 ]
             } .then(function(val) {
                 switch (val.choice) {
                     case 'View All Employees':
-                        
+
                 }
             })
         ])
