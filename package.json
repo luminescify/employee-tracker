@@ -18,6 +18,10 @@
   },
   "homepage": "https://github.com/luminescify/employee-tracker#readme",
   "dependencies": {
-    "inquirer": "^8.2.0"
+    "console.table": "^0.10.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "inquirer": "^8.2.0",
+    "mysql2": "^2.3.2"
   }
 }
