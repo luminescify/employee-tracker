@@ -37,11 +37,11 @@ function loadPrompts() {
                     },
                     {
                         name: 'Add A Department',
-                        value: 'ADD_A_DEPARTMENT'
+                        value: 'ADD_DEPARTMENT'
                     },
                     {
                         name: 'Add A Role',
-                        value: 'ADD_A_ROLE'
+                        value: 'ADD_ROLE'
                     },
                     {
                         name: 'Add An Employee',
@@ -59,8 +59,66 @@ function loadPrompts() {
             } .then(function(val) {
                 switch (val.choice) {
                     case 'View All Employees':
+                        viewAllEmployees();
+                    break;
 
+                    case 'View All Departments':
+                        viewDepartments();
+                    break;
+
+                    case 'View All Roles':
+                        viewRoles();
+                    break;
+
+                    case 'Add A Department':
+                        addDepartment();
+                    break;
+
+                    case 'Add A Role':
+                        addRole();
+                    break;
+
+                    case 'Add An Employee':
+                        addEmployee();
+                    break;
+
+                    case 'Update Employee Role':
+                        updateEmployee();
+                    break;
+
+                    case 'Quit':
+                        init();
+                    break;
                 }
             })
         ])
 }
+
+function viewAllEmployees() {
+
+}
+
+function viewDepartments() {
+    
+}
+
+function viewRoles() {
+    
+}
+
+function addDepartment() {
+    
+}
+
+function addRole() {
+    
+}
+
+function addEmployee() {
+    
+}
+
+function updateEmployee() {
+    
+}
+
