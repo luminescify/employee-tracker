@@ -1,19 +1,8 @@
 // Dependencies
-const mysql = require('mysql');
 const inquirer = require('inquirer');
 const logo = require('asciiart-logo');
+const db = require('./config/connection');
 require('console.table');
-
-// Create database connection through mysql
-const db = mysql.createConnection(
-    {
-        host: 'localhost',
-        user: 'root',
-        password: 'rootroot',
-        database: 'company_db'
-    },
-    console.log(`Connected to the company_db database.`)
-);
 
 // App initialization
 init();
@@ -32,7 +21,7 @@ function loadPrompts() {
             {
                 type: 'list',
                 name: 'choice',
-                message: 'What would you like to do?',
+                message: 'Welcome to the employee database! What would you like to do?',
                 choices: [
                     {
                         name: 'View All Employees',
@@ -98,7 +87,7 @@ function loadPrompts() {
                     break;
 
                     case 'Quit':
-                        init();
+                        quit();
                     break;
                 }
             })
@@ -106,29 +95,160 @@ function loadPrompts() {
 }
 
 function viewAllEmployees() {
-    db.query()
+    db.query('SELECT * FROM employees', (err, res) => {
+        if (err) throw err;
+        console.log(res.length + ' employees found!');
+        console.table('All Employees:', res);
+        loadPrompts();
+    })
 }
 
 function viewDepartments() {
-    
+    db.query('SELECT * FROM departments', (err, res) => {
+        if (err) throw err;
+        console.table('All Departments:', res);
+        loadPrompts();
+    })
 }
 
 function viewRoles() {
-    
+    db.query('SELECT * FROM roles', (err, res) => {
+        if (err) throw err;
+        console.table(('All Roles:'), res);
+        loadPrompts();
+    })
 }
 
 function addDepartment() {
-    
+    inquirer
+        .prompt([
+            {
+                name: 'newDepartment',
+                type: 'input',
+                message: 'Which department would you like to add?'
+            }
+        ]).then(function (answer) {
+            db.query('INSERT INTO departments SET ?',
+            {
+                name: answer.newDepartment
+            });
+            db.query('SELECT * FROM departments', (err, res) => {
+                if (err) throw err;
+                console.log('Your department has been added!');
+                console.table('All Departments:', res);
+                loadPrompts();
+            })
+        })
 }
 
 function addRole() {
-    
+    db.query('SELECT * FROM departments', (err, res) => {
+        if (err) throw err;
+
+        inquirer
+            .prompt([
+                {
+                    name: 'role',
+                    type: 'input',
+                    message: "What new role would you like to add?"
+                },
+                {
+                    name: 'salary',
+                    type: 'input',
+                    message: 'What is the salary of this role? (Please enter a number)'
+                },
+                {
+                    name: 'department',
+                    type: 'list',
+                    choices: function() {
+                        let departments = [];
+                        for (let i = 0; i < res.length; i++) {
+                            departments.push(res[i].name);
+                        }
+                        return departments;
+                    },
+                }
+            ]).then(function (answer) {
+                let department_id;
+                for (let i = 0; i < res.length; i++) {
+                    department_id = res[i].id;
+                }
+            },
+            
+            db.query('INSERT INTO roles SET ?',
+                {
+                    title: answer.role,
+                    salary: answer.salary,
+                    department_id: department_id
+                },
+                function (err, res) {
+                    if (err) throw err;
+                    console.log('Your new role has been added!');
+                    console.table('All Roles:', res);
+                    loadPrompts();
+            }
+            ))
+    })
 }
 
 function addEmployee() {
-    
-}
+    db.query('SELECT * FROM role', function (err, res) {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name: 'first_name',
+                    type: 'input',
+                    message: "What is the employee's first name?"
+                },
+                {
+                    name: 'last_name',
+                    type: 'input',
+                    message: "What is the employee's last name?"
+                },
+                {
+                    name: 'manager_id',
+                    type: 'input',
+                    message: "What is the employee's manager's ID?"
+                },
+                {
+                    name: 'role',
+                    type: 'list',
+                    choices: function() {
+                        let roles = [];
+                        for (let i = 0; i < res.length; i++) {
+                            roles.push(res[i].title);
+                        } return roles;
+                    },
+                    message: "What is this employee's role? "
+                }
+            ]).then(function (answer) {
+                for (let i = 0; i < res.length; i++) {
+                    if (res[i].title == answer.role) {
+                        roles_id = res[i].id;
+                        console.log(roles_id);
+                    }
+                }
+                db.query('INSERT INTO employees SET ?',
+                {
+                    first_name: answer.first_name,
+                    last_name: answer.last_name,
+                    manager_id: answer.manager_id,
+                    role_id: role_id,
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log('Your employee has been added!');
+                    loadPrompts();
+                })
+            })
+    })
+};
 
 function updateEmployee() {
     
+}
+
+function quit() {
+    db.end();
 }

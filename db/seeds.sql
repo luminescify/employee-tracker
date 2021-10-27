@@ -5,16 +5,20 @@ VALUES ("Sales"),
        ("Human Resources"),
        ("Legal");
 
-INSERT INTO roles (department_id, title, salary)
-VALUES (2, "Developer", 120000),
-       (1, "Salesperson", 70000),
-       (4, "HR", 80000),
-       (3, "Accountant", 100000),
-       (5, "Lawyer", 190000);
+INSERT INTO roles (title, salary, department_id)
+VALUES ("Developer", 120000, 2),
+       ("Salesperson", 70000, 1),
+       ("HR Rep", 80000, 4),
+       ("Accountant", 100000, 3),
+       ("Lawyer", 190000, 5);
 
-INSERT INTO employees (role_id, first_name, last_name, manager_id)
-VALUES (1, "Jason", "Lao", null),
-       (2, "Mia", "Samson", 3),
-       (3, "Jess", "Melby", 5),
-       (4, "Kris", "Parson", 2),
-       (5, "Lucas", "Grati", 1);
+INSERT INTO employees (first_name, last_name, role_id)
+VALUES ("Jason", "Lao", 1),
+       ("Mia", "Samson", 5),
+       ("Jess", "Melby", 2),
+       ("Kris", "Parson", 3),
+       ("Lucas", "Grati", 4);
+
+UPDATE company_db.employees 
+SET manager_id = 1 
+WHERE (id > 1);
