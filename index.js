@@ -1,8 +1,19 @@
+// Dependencies
+const mysql = require('mysql');
 const inquirer = require('inquirer');
-const { prompt } = require('inquirer');
 const logo = require('asciiart-logo');
-const db = require('./db');
 require('console.table');
+
+// Create database connection through mysql
+const db = mysql.createConnection(
+    {
+        host: 'localhost',
+        user: 'root',
+        password: 'rootroot',
+        database: 'company_db'
+    },
+    console.log(`Connected to the company_db database.`)
+);
 
 // App initialization
 init();
@@ -95,7 +106,7 @@ function loadPrompts() {
 }
 
 function viewAllEmployees() {
-
+    db.query()
 }
 
 function viewDepartments() {
@@ -121,4 +132,3 @@ function addEmployee() {
 function updateEmployee() {
     
 }
-
