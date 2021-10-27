@@ -1,5 +1,6 @@
 // Dependencies
 const inquirer = require('inquirer');
+const mysql = require('mysql2');
 const logo = require('asciiart-logo');
 const db = require('./config/connection');
 require('console.table');
@@ -22,76 +23,51 @@ function loadPrompts() {
                 type: 'list',
                 name: 'choice',
                 message: 'Welcome to the employee database! What would you like to do?',
-                choices: [
-                    {
-                        name: 'View All Employees',
-                        value: 'VIEW_EMPLOYEES'
-                    },
-                    {
-                        name: 'View All Departments',
-                        value: 'VIEW_ALL_DEPARTMENTS'
-                    },
-                    {
-                        name: 'View All Roles',
-                        value: 'VIEW_ALL_ROLES'
-                    },
-                    {
-                        name: 'Add A Department',
-                        value: 'ADD_DEPARTMENT'
-                    },
-                    {
-                        name: 'Add A Role',
-                        value: 'ADD_ROLE'
-                    },
-                    {
-                        name: 'Add An Employee',
-                        value: 'ADD_EMPLOYEE'
-                    },
-                    {
-                        name: 'Update Employee Role',
-                        value: 'UPDATE_EMPLOYEE_ROLE'
-                    },
-                    {
-                        name: 'Quit',
-                        value: 'QUIT'
-                    }
+                choices: ['View All Employees',
+                          'View All Departments',
+                          'View All Roles',
+                          'Add A Department',
+                          'Add A Role',
+                          'Add An Employee',
+                          'Update Employee Role',
+                          'Quit'
                 ]
-            } .then(function(val) {
-                switch (val.choice) {
-                    case 'View All Employees':
-                        viewAllEmployees();
-                    break;
+            }
+        ]).then(function(val) {
+            switch (val.choice) {
+                case 'View All Employees':
+                    viewAllEmployees();
+                break;
 
-                    case 'View All Departments':
-                        viewDepartments();
-                    break;
+                case 'View All Departments':
+                    viewDepartments();
+                break;
 
-                    case 'View All Roles':
-                        viewRoles();
-                    break;
+                case 'View All Roles':
+                    viewRoles();
+                break;
 
-                    case 'Add A Department':
-                        addDepartment();
-                    break;
+                case 'Add A Department':
+                    addDepartment();
+                break;
 
-                    case 'Add A Role':
-                        addRole();
-                    break;
+                case 'Add A Role':
+                    addRole();
+                break;
 
-                    case 'Add An Employee':
-                        addEmployee();
-                    break;
+                case 'Add An Employee':
+                    addEmployee();
+                break;
 
-                    case 'Update Employee Role':
-                        updateEmployee();
-                    break;
+                case 'Update Employee Role':
+                    updateEmployee();
+                break;
 
-                    case 'Quit':
-                        quit();
-                    break;
-                }
-            })
-        ])
+                case 'Quit':
+                    quit();
+                break;
+            }
+        })
 }
 
 function viewAllEmployees() {
@@ -192,7 +168,7 @@ function addRole() {
 }
 
 function addEmployee() {
-    db.query('SELECT * FROM role', function (err, res) {
+    db.query('SELECT * FROM roles', function (err, res) {
         if (err) throw err;
         inquirer
             .prompt([
