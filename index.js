@@ -2,8 +2,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const logo = require('asciiart-logo');
-const db = require('./config/connection');
-const { response } = require('express');
+const db = require('./server');
 require('console.table');
 
 // App initialization
@@ -17,6 +16,7 @@ function init() {
     loadPrompts();
 }
 
+// Load selection prompts
 function loadPrompts() {
     inquirer
         .prompt([
@@ -71,13 +71,15 @@ function loadPrompts() {
         })
 }
 
+// 
 function viewAllEmployees() {
     db.query(`SELECT employees.id,
              employees.first_name,
              employees.last_name,
              roles.title,
              departments.name AS 'department',
-             roles.salary
+             roles.salary,
+             employees.manager_id
              FROM employees, roles, departments
              WHERE departments.id = roles.department_id
              AND roles.id = employees.role_id
@@ -136,54 +138,66 @@ function addDepartment() {
 }
 
 function addRole() {
-    db.query('SELECT * FROM departments', (err, res) => {
+    db.query(` SELECT * FROM departments`, (err, res) => {
         if (err) throw err;
-
+        let deptNames = [];
+        res.forEach((department) => {deptNames.push(department.department_name)});
+        deptNames.push('Create Department');
         inquirer
             .prompt([
                 {
-                    name: 'role',
-                    type: 'input',
-                    message: "What new role would you like to add?"
-                },
-                {
-                    name: 'salary',
-                    type: 'input',
-                    message: 'What is the salary of this role? (Please enter a number)'
-                },
-                {
-                    name: 'department',
+                    name: 'deptName',
                     type: 'list',
-                    messsage: 'What department does this role belong to?',
-                    choices: function() {
-                        let departments = [];
-                        for (let i = 0; i < res.length; i++) {
-                            departments.push(res[i].name);
-                        }
-                        return departments;
-                    },
+                    message: 'Which department is this new role in?',
+                    choices: deptNames
                 }
-            ]).then(function (answer) {
-                for (let i = 0; i < res.length; i++) {
-                    department_id = res[i].id;
-                }
+            ]) .then((answer) => {
+                    if (answer.departmentName === 'Create Department') {
+                        inquirer
+                            .prompt([
+                                {
+                                    name: 'newDepartment',
+                                    type: 'input',
+                                    message: 'What is the name of the new department?'
+                                }
+                            ]) .then((answer) => {
+                                db.query(`INSERT INTO departments (department_name) VALUES (?)`, answer.newDepartment, (err, res) => {
+                                    if (err) throw err;
+                                    console.log(`Department successfully created!`);
+                                })
+                        })
+                    } else {
+                        inquirer
+                            .prompt([
+                                {
+                                    name: 'newRole',
+                                    type: 'input',
+                                    message: 'What is the name of the new role?',
+                                },
+                                {
+                                    name: 'salary',
+                                    type: 'input',
+                                    message: 'What is the salary of the new role?'
+                                }
+                            ]) .then((answer => {
+                                let createdRole = answer.newRole;
+                                let departmentId;
 
-                db.query('INSERT INTO roles SET ?',
-                {
-                    title: answer.role,
-                    salary: answer.salary,
-                    department_id: answer.department
-                },
-                function (err, res) {
-                    if (err) throw err;
-                    console.log('Your new role has been added!');
-                    console.table('All Roles:', res);
-                    loadPrompts();
-                })
-        })
+                                res.forEach((department) => {
+                                    if (department.departmentName === department.department_name) {departmentId = department.id}
+                                })
+
+                                db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, 
+                                [createdRole, answer.salary, departmentId], (err) => {
+                                    if (err) throw err;
+                                    console.log('Role successfully created!');
+                                })
+                            }))
+                    }
+            })
     })
 }
-    
+
 function addEmployee() {
     inquirer
         .prompt([

@@ -1,12 +1,16 @@
+// Dependencies
 const express = require('express');
 const mysql = require('mysql2');
 
+// PORT
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+// Importing Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// Creating database connection
 const db = mysql.createConnection(
     {
         host: 'localhost',
@@ -26,3 +30,5 @@ app.use((req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
+
+module.exports = db;
