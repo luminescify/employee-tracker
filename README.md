@@ -27,9 +27,7 @@ This project uses mySQL database connectivity and Express.JS routing to allow us
 
 The following video shows how a user would utilize the application.
 
-<figure class="video_container">
-  <iframe src="https://www.youtube.com/embed/aAe6VWJBrM4" frameborder="0" allowfullscreen="true"> </iframe>
-</figure>
+https://youtu.be/aAe6VWJBrM4
 
 ## License
 
