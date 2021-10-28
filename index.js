@@ -71,7 +71,7 @@ function loadPrompts() {
         })
 }
 
-// 
+// View all employees
 function viewAllEmployees() {
     db.query(`SELECT employees.id,
              employees.first_name,
@@ -88,6 +88,7 @@ function viewAllEmployees() {
     })
 }
 
+// View all departments
 function viewDepartments() {
     db.query(`SELECT departments.id AS id,
              departments.name AS department FROM departments;`, 
@@ -98,6 +99,7 @@ function viewDepartments() {
     })
 }
 
+// View all roles
 function viewRoles() {
     db.query(`SELECT roles.id,
              roles.title,
@@ -111,6 +113,7 @@ function viewRoles() {
     })
 }
 
+// Add a new department
 function addDepartment() {
     inquirer
         .prompt([
@@ -133,6 +136,7 @@ function addDepartment() {
         })
 }
 
+// Add a new role
 function addRole() {
     db.query(` SELECT * FROM departments`, (err, res) => {
         if (err) throw err;
@@ -183,6 +187,7 @@ function addRole() {
     })
 }
 
+// Add a new employee
 function addEmployee() {
     inquirer
         .prompt([
@@ -240,6 +245,7 @@ function addEmployee() {
         })
 };
 
+// Update an employee
 function updateEmployee() {
     db.query(`SELECT employees.id,
               employees.first_name,
@@ -297,6 +303,7 @@ function updateEmployee() {
               })
 }
 
+// Quit the application
 function quit() {
     db.end();
 }
