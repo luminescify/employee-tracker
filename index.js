@@ -79,11 +79,7 @@ function viewAllEmployees() {
              roles.title,
              departments.name AS 'department',
              roles.salary,
-             employees.manager_id
-             FROM employees, roles, departments
-             WHERE departments.id = roles.department_id
-             AND roles.id = employees.role_id
-             ORDER BY employees.id ASC`, 
+             CONCAT(manager.first_name, " ", manager.last_name) AS manager FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments on roles.department_id = departments.id LEFT JOIN employees manager on manager.id = employees.manager_id`, 
         (err, res) => {
         if (err) throw err;
         console.log(res.length + ' employees found!');
@@ -141,7 +137,7 @@ function addRole() {
     db.query(` SELECT * FROM departments`, (err, res) => {
         if (err) throw err;
         let deptNames = [];
-        res.forEach((department) => {deptNames.push(department.department_name)});
+        res.forEach((department) => {deptNames.push(department.name)});
         deptNames.push('Create Department');
         inquirer
             .prompt([
@@ -153,19 +149,7 @@ function addRole() {
                 }
             ]) .then((answer) => {
                     if (answer.departmentName === 'Create Department') {
-                        inquirer
-                            .prompt([
-                                {
-                                    name: 'newDepartment',
-                                    type: 'input',
-                                    message: 'What is the name of the new department?'
-                                }
-                            ]) .then((answer) => {
-                                db.query(`INSERT INTO departments (department_name) VALUES (?)`, answer.newDepartment, (err, res) => {
-                                    if (err) throw err;
-                                    console.log(`Department successfully created!`);
-                                })
-                        })
+                        addDepartment();
                     } else {
                         inquirer
                             .prompt([
@@ -191,6 +175,7 @@ function addRole() {
                                 [createdRole, answer.salary, departmentId], (err) => {
                                     if (err) throw err;
                                     console.log('Role successfully created!');
+                                    loadPrompts();
                                 })
                             }))
                     }
